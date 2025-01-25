@@ -218,6 +218,54 @@ class WPBA_Meta_Box extends WP_Better_Attachments
 	} // output_caption_input()
 
 
+	/**
+        * Output hylkykuvan tyyppi
+        *
+        * @since latest
+        *
+        * @return string hylkykuvan tyyppi meta box input field HTML
+        */
+        public function output_hylytnet_kuvatyyppi_input( $args = array() )
+        {
+                extract( $args );
+                $field_value = get_post_meta( $attachment->ID, '_wp_attachment_image_type', true );
+                $post = get_post( $attachment->post_parent );
+                $post_type_obj = get_post_type_object( $post->post_type );
+                global $wpba_wp_settings_api;
+                $disabled_post_types = $wpba_wp_settings_api->get_option( "wpba-{$post_type_obj->name}-settings", 'wpba_settings', array() );
+
+                // Make sure user has not disabled title editing
+                if ( $this->setting_disabled( 'meta-box-title-editor' ) )
+                        return '';
+
+                // Build title form
+                $html = '';
+                $nl = "\n";
+                $html .= '<label class="wpba-label" for="attachment_'.$attachment->ID.'_hylkykuvatyyppi">Hylkykuvan tyyppi</label>';
+                $html .= '<input ';
+                $html .= 'type="text" disabled ';
+                $html .= 'class="pull-left wpba-attachment-title widefat" ';
+                $html .= 'id="attachment_'.$attachment->ID.'_hylkykuvatyyppi" ';
+                $html .= 'name="attachment_'.$attachment->ID.'_hylkykuvatyyppi" ';
+                $html .= 'value="'.$field_value.'" ';
+                $html .= 'placeholder="HylkykuvanTyyppi">' . $nl;
+	       	       /*
+               $html = '<select name="attachment_'.$attachment->ID.'_hylkykuvatyyppi" id="attachment_'.$attachment->ID.'_hylkykuvatyyppi" > ';
+               $html .="<option value=''".selected($field_value,'',false)."> ei valittu </option>";
+               $html .="<option value='kuvitus'".selected($field_value,'kuvitus',false).">kuvitus</option>";
+               $html .="<option value='mk'".selected($field_value,'mk',false).">mk</option>";
+               $html .="<option value='linja'".selected($field_value,'linja',false).">linja</option>";
+               $html .="<option value='video'".selected($field_value,'video',false).">video</option>";
+               $html .="<option value='3dmalli'".selected($field_value,'3dmalli',false).">3dmalli</option>";
+               $html .="<option value='oembed'".selected($field_value,'oembed',false).">oembed</option>";
+               $html .="<option value='pdf'".selected($field_value,'pdf',false).">pdf</option>";
+               $html .="<option value='piilotettu'".selected($field_value,'piilotettu',false).">piilotettu</option>";
+	       $html .="</select>";
+               */
+                return $html;
+        } // output_title_input()
+
+
 
 	/**
 	* Editors Display Class
@@ -237,6 +285,7 @@ class WPBA_Meta_Box extends WP_Better_Attachments
 	} // display_class()
 
 
+	
 	/**
 	* Output Post Attachments
  	*
@@ -294,6 +343,7 @@ class WPBA_Meta_Box extends WP_Better_Attachments
 				$html .= '<div class="wpba-form-wrap pull-left" data-id="'.$attachment_id.'">' . $nl;
 					$html .= '<div>' . $this->output_title_input( array( 'attachment' => $attachment) )  . '</div>' . $nl;
 					$html .= '<div>' . $this->output_caption_input( array( 'attachment' => $attachment) ) . '</div>'  . $nl;
+					$html .= '<div>' . $this->output_hylytnet_kuvatyyppi_input( array( 'attachment' => $attachment) ) . '</div>'  . $nl;
 				$html .= '</div>' . $nl;
 				$html .= '<div class="clear"></div>' . $nl;
 				$html .= apply_filters('wpba_image_attachment_li_content_after', '', $attachment, $mime_type) . $nl;
